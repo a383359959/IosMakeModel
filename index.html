@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>IosMakeModel By QiuHao</title>
+    <link rel="stylesheet" href="reset.css" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        body, html {
+            background: #f8f8f8;
+        }
+        .json_textarea{
+            padding: 0px 0.8em;
+        }
+        .json_textarea h1 {
+            font-size: 20px;
+            font-weight: 400;
+            border-bottom: 1px solid #e1e4e8;
+            line-height: 40px;
+        }
+        .json_textarea textarea{
+            border: 1px solid #e1e4e8;
+            width: calc(100% - 20px);
+            height: 200px;
+            margin-top: 10px;
+            font-size: 14px;
+            padding: 10px;
+            resize: none;
+        }
+    </style>
+    <script src="jsonlint.js"></script>
+    <script src="jsonToModel.js"></script>
+
+    <!-- codeMirror -->
+    <link rel="stylesheet" href="codemirror/lib/codemirror.css">
+    <link rel="stylesheet" href="codemirror/doc/docs.css">
+    <link rel="stylesheet" href="codemirror/addon/lint/lint.css">
+    <script src="codemirror/lib/codemirror.js"></script>
+    <script src="codemirror/addon/lint/javascript-lint.js"></script>
+    <script src="codemirror/addon/lint/lint.js"></script>
+    <script src="codemirror/addon/lint/json-lint.js"></script>
+</head>
+<body>
+
+    <div class="json_textarea" style="padding-top: 0.8em;">
+        <textarea name="json_code" id="json_code"></textarea>
+        <script>
+            var editor_json = CodeMirror.fromTextArea(document.getElementById("json_code"), {
+                lineNumbers: true,
+                mode: "application/json",
+                gutters: ["CodeMirror-lint-markers"],
+                lint: true
+            });
+        </script>
+    </div>
+
+    <div class="json_textarea">
+        <div class="validate">
+            <input id="fileName" placeholder="ModelName">
+            <div class="buttons">
+                <button id="submit" class="model">转换</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="json_textarea">
+        <div id="precode">
+            <pre id="headCode" class="model-result prettyprint lang-m prettyprinted">
+                <div class="normal" style="text-align: center;">暂无数据</div>
+            </pre>
+            <pre id="implementCode" class="model-result prettyprint lang-m prettyprinted" style="margin: 0.8em 0;">
+                <div class="normal" style="text-align: center;">暂无数据</div>
+            </pre>
+        </div>
+    </div>
+
+    <script>
+        const submit = document.querySelector("#submit");
+        submit.onclick = () => {
+            var json = editor_json.getValue().trim();
+            try {
+                var d = jsonlint.parse(json);
+                if (d) {
+                    json = eval("(" + json + ")");
+                    var modelName = document.getElementById("fileName").value;
+                    if (modelName == "") modelName = "modelName";
+                    document.querySelector("#headCode").innerHTML = getJsonModel(json, document.getElementById("fileName").value, "k");
+                    document.querySelector("#implementCode").innerHTML = getJsonModel(json, document.getElementById("fileName").value, "l");
+                }
+            } catch(e) {
+                const ipc = require("electron").ipcRenderer;
+                ipc.send("open-error-dialog", e.toString());
+            }
+        }
+    </script>
+
+</body>
+</html>

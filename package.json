@@ -1,0 +1,26 @@
+{
+  "name": "IosMakeModel",
+  "version": "1.0.0",
+  "description": "A minimal Electron application",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dmg": "appdmg ./IosMakeModel-darwin-x64/package.json ./IosMakeModel-darwin-x64/app.dmg",
+    "package": "electron-packager . IosMakeModel --platform=darwin --arch=x64 --electron-version=1.0.0 --overwrite --ignore=node_modules --ignore=.gitignore"
+  },
+  "repository": "https://github.com/electron/electron-quick-start",
+  "keywords": [
+    "Electron",
+    "quick",
+    "start",
+    "tutorial",
+    "demo"
+  ],
+  "author": "GitHub",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "appdmg": "^0.5.2",
+    "electron": "^4.1.3",
+    "electron-packager": "^13.1.1"
+  }
+}
